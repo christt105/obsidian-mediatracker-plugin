@@ -4,6 +4,15 @@ import { get_json, request_json } from "./http";
 const BASE = "https://api4.thetvdb.com/v4";
 const ARTWORK_BASE = "https://artworks.thetvdb.com";
 
+/**
+ * TheTVDB v4 API keys are per-project (not per-user), so a single project key
+ * can be bundled with the plugin — the same approach Jellyfin uses. Paste a key
+ * registered at https://www.thetvdb.com/api-information here to let users skip
+ * the API-key step (they may still need a subscriber PIN). Leave empty to
+ * require each user to provide their own key.
+ */
+export const DEFAULT_THETVDB_API_KEY = "";
+
 interface TVDBArtwork {
 	id: number;
 	image: string;
@@ -25,6 +34,17 @@ interface TVDBSeason {
 interface TVDBRemoteId {
 	id: string;
 	sourceName?: string;
+}
+
+interface TVDBTranslation {
+	language: string;
+	name?: string;
+	overview?: string;
+}
+
+interface TVDBTranslations {
+	nameTranslations?: TVDBTranslation[];
+	overviewTranslations?: TVDBTranslation[];
 }
 
 interface TVDBSearchItem {
@@ -66,14 +86,27 @@ export class TheTVDBClient {
 			.filter((r): r is SearchResult => r !== null);
 	}
 
-	async get_details(id: number, media_type: MediaType): Promise<MediaData> {
+	/** `language` is a 3-letter TheTVDB code (e.g. "eng", "spa", "jpn"). */
+	async get_details(id: number, media_type: MediaType, language: string): Promise<MediaData> {
 		const path = media_type === "movie" ? `/movies/${id}/extended` : `/series/${id}/extended`;
-		const r = (await this.get<{ data: Record<string, unknown> }>(path)).data;
+		const r = (await this.get<{ data: Record<string, unknown> }>(path, { meta: "translations" }))
+			.data;
 
 		const remote = (r.remoteIds as TVDBRemoteId[] | undefined) ?? [];
 		const tmdb = remote.find(x => (x.sourceName ?? "").toLowerCase().includes("moviedb"));
 		const artworks = (r.artworks as TVDBArtwork[] | undefined) ?? [];
 		const seasons = (r.seasons as TVDBSeason[] | undefined) ?? [];
+		const translations = r.translations as TVDBTranslations | undefined;
+
+		// Base name/overview are in the original language; prefer a translation
+		// for the requested locale, then English, then the original.
+		const original_name = (r.name as string) || "";
+		const title = pick_translation(translations?.nameTranslations, language, original_name);
+		const overview = pick_translation(
+			translations?.overviewTranslations,
+			language,
+			(r.overview as string) || "",
+		);
 
 		const year = typeof r.year === "number" || typeof r.year === "string" ? String(r.year) : "";
 		const release_date = (r.firstAired as string) || year;
@@ -82,11 +115,11 @@ export class TheTVDBClient {
 
 		return {
 			type: media_type,
-			title: (r.name as string) || "",
-			original_title: (r.name as string) || "",
+			title,
+			original_title: original_name,
 			release_date,
 			year: release_date ? release_date.split("-")[0] : "",
-			overview: clean((r.overview as string) || ""),
+			overview: clean(overview),
 			cover: absolute(poster),
 			banner: absolute(banner),
 			genres: ((r.genres as { name: string }[] | undefined) ?? []).map(g => g.name),
@@ -184,6 +217,18 @@ export class TheTVDBClient {
 		await this.tokens.save(token, Date.now() + 24 * 24 * 60 * 60 * 1000);
 		return token;
 	}
+}
+
+/** Choose a translation for the locale, falling back to English then original. */
+function pick_translation(
+	list: TVDBTranslation[] | undefined,
+	language: string,
+	fallback: string,
+): string {
+	if (!list?.length) return fallback;
+	const chosen =
+		list.find(t => t.language === language) ?? list.find(t => t.language === "eng") ?? list[0];
+	return chosen.name || chosen.overview || fallback;
 }
 
 /** Classify artwork by aspect ratio: posters are tall, banners/backdrops wide. */

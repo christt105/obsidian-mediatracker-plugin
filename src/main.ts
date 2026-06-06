@@ -9,7 +9,7 @@ import {
 } from "@/settings";
 import { MediaTrackerSettingTab } from "@/settings_tab";
 import { TMDBClient } from "@/apis/tmdb";
-import { TheTVDBClient } from "@/apis/thetvdb";
+import { DEFAULT_THETVDB_API_KEY, TheTVDBClient } from "@/apis/thetvdb";
 import { IGDBClient } from "@/apis/igdb";
 import { search_steam } from "@/apis/steam";
 import { SteamGridDBClient } from "@/apis/steamgriddb";
@@ -91,9 +91,15 @@ export default class MediaTrackerPlugin extends Plugin {
 		return new TMDBClient(this.settings.tmdb_api_key, this.settings.include_adult);
 	}
 
+	/** The TheTVDB key, falling back to the bundled project key. */
+	private thetvdb_api_key(): string {
+		return this.settings.thetvdb_api_key || DEFAULT_THETVDB_API_KEY;
+	}
+
 	private thetvdb(): TheTVDBClient {
-		if (!this.settings.thetvdb_api_key) throw new Error("Set your TheTVDB API key in the settings.");
-		return new TheTVDBClient(this.settings.thetvdb_api_key, this.settings.thetvdb_pin, {
+		const key = this.thetvdb_api_key();
+		if (!key) throw new Error("Set your TheTVDB API key in the settings.");
+		return new TheTVDBClient(key, this.settings.thetvdb_pin, {
 			token: this.settings.thetvdb_token,
 			expires_at: this.settings.thetvdb_token_expires_at,
 			save: async (token, expires_at) => {
@@ -105,7 +111,7 @@ export default class MediaTrackerPlugin extends Plugin {
 	}
 
 	private provider_configured(provider: Provider): boolean {
-		return provider === "tmdb" ? !!this.settings.tmdb_api_key : !!this.settings.thetvdb_api_key;
+		return provider === "tmdb" ? !!this.settings.tmdb_api_key : !!this.thetvdb_api_key();
 	}
 
 	/**
@@ -210,7 +216,7 @@ export default class MediaTrackerPlugin extends Plugin {
 
 	private async fetch_details(selected: SearchResult, language: string): Promise<MediaData> {
 		if (selected.provider === "thetvdb") {
-			return this.thetvdb().get_details(selected.id, selected.media_type);
+			return this.thetvdb().get_details(selected.id, selected.media_type, this.tvdb_language());
 		}
 		const media = await this.tmdb().get_details(selected.id, selected.media_type, language);
 		// Cross-reference the TheTVDB id so season artwork can use either provider.
@@ -421,25 +427,29 @@ export default class MediaTrackerPlugin extends Plugin {
 			return null;
 		}
 
+		// Gather artwork from both providers so the picker shows every option,
+		// with the preferred provider's images listed first.
 		const kind_pref = type === "movie" ? "movie" : "tv";
 		const preferred = this.resolve_provider(kind_pref);
 		const order: Provider[] = preferred === "thetvdb" ? ["thetvdb", "tmdb"] : ["tmdb", "thetvdb"];
 
+		const images: MediaImage[] = [];
 		for (const provider of order) {
 			try {
 				if (provider === "tmdb" && tmdb_id && this.settings.tmdb_api_key) {
-					const images = await this.tmdb_av_images(tmdb_id, type, kind, season_number);
-					if (images.length) return images;
-				} else if (provider === "thetvdb" && thetvdb_id && this.settings.thetvdb_api_key) {
-					const images = await this.thetvdb_av_images(thetvdb_id, type, kind, season_number);
-					if (images.length) return images;
+					images.push(...(await this.tmdb_av_images(tmdb_id, type, kind, season_number)));
+				} else if (provider === "thetvdb" && thetvdb_id && this.thetvdb_api_key()) {
+					images.push(...(await this.thetvdb_av_images(thetvdb_id, type, kind, season_number)));
 				}
 			} catch (error) {
-				console.warn(`Media Tracker: ${provider} images failed, trying fallback`, error);
+				console.warn(`Media Tracker: ${provider} images failed`, error);
 			}
 		}
-		new Notice("No images found.");
-		return null;
+		if (!images.length) {
+			new Notice("No images found.");
+			return null;
+		}
+		return images;
 	}
 
 	private async tmdb_av_images(
@@ -479,6 +489,14 @@ export default class MediaTrackerPlugin extends Plugin {
 			if (images.length) return images;
 		}
 		return client.get_series_images(id, kind);
+	}
+
+	/** Map the preferred locale to a 3-letter TheTVDB language code. */
+	private tvdb_language(): string {
+		let locale = this.settings.locale_preference;
+		if (!locale || locale === "auto") locale = window.moment.locale() || "en";
+		const two = locale.split("-")[0].toLowerCase();
+		return TVDB_LANGUAGES[two] ?? "eng";
 	}
 
 	/** Ordered ISO-639-1 codes for sorting image choices. */
@@ -662,3 +680,34 @@ function report_empty(error: unknown): SearchResult[] {
 	console.warn("Media Tracker: search failed for one provider", error);
 	return [];
 }
+
+/** ISO-639-1 (2-letter) → TheTVDB 3-letter language codes for common locales. */
+const TVDB_LANGUAGES: Record<string, string> = {
+	en: "eng",
+	es: "spa",
+	ca: "cat",
+	pt: "por",
+	fr: "fra",
+	de: "deu",
+	it: "ita",
+	nl: "nld",
+	ja: "jpn",
+	ko: "kor",
+	zh: "zho",
+	ru: "rus",
+	pl: "pol",
+	sv: "swe",
+	da: "dan",
+	fi: "fin",
+	no: "nor",
+	cs: "ces",
+	el: "ell",
+	he: "heb",
+	hu: "hun",
+	tr: "tur",
+	ar: "ara",
+	hi: "hin",
+	th: "tha",
+	uk: "ukr",
+	ro: "ron",
+};

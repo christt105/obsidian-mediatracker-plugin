@@ -211,7 +211,10 @@ export class MediaTrackerSettingTab extends PluginSettingTab {
 			"https://www.thetvdb.com/api-information",
 		);
 
-		new Setting(containerEl).setName("TheTVDB API key").addText(text => {
+		new Setting(containerEl)
+			.setName("TheTVDB API key")
+			.setDesc("Leave empty to use the bundled project key, if the plugin ships with one.")
+			.addText(text => {
 			text.inputEl.type = "password";
 			text.setValue(this.settings.thetvdb_api_key).onChange(async value => {
 				this.settings.thetvdb_api_key = value.trim();

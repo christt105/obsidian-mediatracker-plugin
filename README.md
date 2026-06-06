@@ -72,12 +72,18 @@ images can use whichever provider has the artwork (and respects seasons).
 
 ### TheTVDB (TV shows & seasons)
 
+TheTVDB v4 API keys are **per-project**, not per-user, so the plugin can bundle one
+project key (the same approach Jellyfin uses). If a key is bundled you can leave the
+field empty; otherwise:
+
 1. Register a project at [TheTVDB API information](https://www.thetvdb.com/api-information)
    to get a **v4 API key**.
 2. Paste it into *TheTVDB API key*. For a personal / user-supported key, also enter
    your **subscriber PIN** (from your TheTVDB account) in *TheTVDB subscriber PIN*.
 
-The login token is fetched and refreshed automatically.
+The login token is fetched and refreshed automatically. Titles and overviews are
+localized to your preferred locale (falling back to English, then the original
+language) using TheTVDB's translations.
 
 ### IGDB (video games)
 
