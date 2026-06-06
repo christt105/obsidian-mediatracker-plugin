@@ -308,14 +308,24 @@ export default class MediaTrackerPlugin extends Plugin {
 		let tmdb_id = fm?.tmdb_id as number | undefined;
 		const season_number = Number(fm?.season_number) || undefined;
 
-		// For a season note, look up the parent show's tmdb_id.
-		const series = fm?.series;
-		if (type === "season" && typeof series === "string") {
-			const parent = this.resolve_link(series, file);
-			tmdb_id = parent ? (this.frontmatter_of(parent)?.tmdb_id as number | undefined) : undefined;
+		// For a season note, the tmdb_id lives on the parent show. The `series`
+		// property may be a string or a list, with or without [[...]] / aliases.
+		if (type === "season" && !tmdb_id) {
+			const parent = this.resolve_first_link(fm?.series, file);
+			if (!parent) {
+				new Notice(
+					"Couldn't find the parent show. The season's 'series' property must link to it.",
+				);
+				return null;
+			}
+			tmdb_id = this.frontmatter_of(parent)?.tmdb_id as number | undefined;
+			if (!tmdb_id) {
+				new Notice(`The show "${parent.basename}" has no 'tmdb_id'.`);
+				return null;
+			}
 		}
 		if (!tmdb_id) {
-			new Notice("No 'tmdb_id' found on this note (or its parent show).");
+			new Notice("No 'tmdb_id' found on this note.");
 			return null;
 		}
 
@@ -481,8 +491,20 @@ export default class MediaTrackerPlugin extends Plugin {
 		return this.app.metadataCache.getFileCache(file)?.frontmatter as Frontmatter | undefined;
 	}
 
-	private resolve_link(link: string, source: TFile): TFile | null {
-		const path = link.replace(/^\[\[/, "").replace(/\]\]$/, "").split("|")[0];
+	/**
+	 * Resolve a frontmatter link value to a file. Accepts a string or a list
+	 * (uses the first entry), with or without `[[...]]` wrapping and `|` aliases.
+	 */
+	private resolve_first_link(value: unknown, source: TFile): TFile | null {
+		const raw: unknown = Array.isArray(value) ? value[0] : value;
+		if (typeof raw !== "string") return null;
+		const path = raw
+			.replace(/^\[\[/, "")
+			.replace(/\]\]$/, "")
+			.split("|")[0]
+			.split("#")[0]
+			.trim();
+		if (!path) return null;
 		return this.app.metadataCache.getFirstLinkpathDest(path, source.path);
 	}
 
