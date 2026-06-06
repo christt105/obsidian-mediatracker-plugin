@@ -55,6 +55,8 @@ interface TVDBSearchItem {
 	year?: string;
 	image_url?: string;
 	overview?: string;
+	/** Map of language code -> localized title. */
+	translations?: Record<string, string>;
 }
 
 export interface TheTVDBTokenStore {
@@ -74,7 +76,7 @@ export class TheTVDBClient {
 		return !!this.api_key;
 	}
 
-	async search(query: string, kind: "all" | "movie" | "tv"): Promise<SearchResult[]> {
+	async search(query: string, kind: "all" | "movie" | "tv", language: string): Promise<SearchResult[]> {
 		const params: Record<string, string | number> = { query, limit: 25 };
 		if (kind === "movie") params.type = "movie";
 		else if (kind === "tv") params.type = "series";
@@ -82,7 +84,7 @@ export class TheTVDBClient {
 		const data = await this.get<{ data: TVDBSearchItem[] }>("/search", params);
 		return (data.data ?? [])
 			.filter(item => kind !== "all" || item.type === "series" || item.type === "movie")
-			.map(item => this.to_search_result(item))
+			.map(item => this.to_search_result(item, language))
 			.filter((r): r is SearchResult => r !== null);
 	}
 
@@ -166,13 +168,17 @@ export class TheTVDBClient {
 		return this.to_images(data.artworks ?? [], kind);
 	}
 
-	private to_search_result(item: TVDBSearchItem): SearchResult | null {
+	private to_search_result(item: TVDBSearchItem, language: string): SearchResult | null {
 		const id = Number(item.tvdb_id ?? item.id);
 		if (!id || isNaN(id)) return null;
+		// Show a localized title in the chooser (locale -> English -> original).
+		const translations = item.translations ?? {};
+		const title = translations[language] || translations.eng || item.name;
 		return {
 			id,
 			media_type: item.type === "movie" ? "movie" : "tv",
-			title: item.name,
+			title,
+			original_title: item.name,
 			release_date: item.year ?? "",
 			poster_path: item.image_url ? absolute(item.image_url) : "",
 			provider: "thetvdb",

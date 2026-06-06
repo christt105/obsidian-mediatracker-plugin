@@ -211,7 +211,7 @@ export default class MediaTrackerPlugin extends Plugin {
 			const filtered = kind === "all" ? results : results.filter(r => r.media_type === kind);
 			return filtered.map(r => ({ ...r, provider: "tmdb" as const }));
 		}
-		return this.thetvdb().search(query, kind);
+		return this.thetvdb().search(query, kind, this.tvdb_language());
 	}
 
 	private async fetch_details(selected: SearchResult, language: string): Promise<MediaData> {
