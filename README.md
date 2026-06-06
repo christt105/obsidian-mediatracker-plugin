@@ -150,6 +150,19 @@ Pushing a tag builds the plugin and creates a **draft GitHub release** with
 `main.js`, `manifest.json` and `styles.css` attached, ready to publish.
 A separate `lint.yml` workflow type-checks and lints every push and PR.
 
+## Credits
+
+This plugin builds on the work of several open-source projects:
+
+- [**Movie Search**](https://github.com/Gubchik123/obsidian-movie-search-plugin) by
+  Gubchik123 — the TMDB integration patterns (multi-search, v3/v4 token handling,
+  trailer selection, template variables and settings layout) are adapted from it.
+- [**obsidian-sample-plugin**](https://github.com/obsidianmd/obsidian-sample-plugin) —
+  project scaffolding, build setup and release workflow.
+- The QuickAdd / Templater scripts from the
+  [Media Tracker Obsidian Template](https://github.com/christt105/media-tracker-obsidian-template)
+  (IGDB script originally by christt105 / Elaws), which this plugin replaces.
+
 ## Attribution
 
 This project uses data and images from:
