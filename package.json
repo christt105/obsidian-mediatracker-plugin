@@ -1,6 +1,6 @@
 {
 	"name": "media-tracker",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "Track movies, TV shows, seasons and video games in Obsidian. Data and artwork from TMDB, IGDB, Steam and SteamGridDB.",
 	"main": "main.js",
 	"type": "module",
