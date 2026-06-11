@@ -1,7 +1,7 @@
 {
 	"id": "media-tracker",
 	"name": "Media Tracker",
-	"version": "1.2.2",
+	"version": "1.3.0",
 	"minAppVersion": "1.6.6",
 	"description": "Track movies, TV shows, seasons and video games in one place. Pulls data and artwork from TMDB, IGDB, Steam and SteamGridDB.",
 	"author": "christt105",
