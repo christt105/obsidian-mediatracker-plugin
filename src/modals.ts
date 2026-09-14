@@ -144,7 +144,12 @@ export class ResultSuggestModal extends SuggestModal<SearchResult> {
 
 	onClose() {
 		super.onClose();
-		if (!this.resolved) this.resolve(null);
+		// Obsidian can fire onClose (e.g. from a click-triggered blur) before
+		// onChooseSuggestion finishes running for that same click. Defer the
+		// "nothing chosen" fallback one tick so a same-gesture choice wins.
+		setTimeout(() => {
+			if (!this.resolved) this.resolve(null);
+		}, 0);
 	}
 }
 
@@ -179,7 +184,10 @@ export class ChoiceModal<T> extends SuggestModal<T> {
 
 	onClose() {
 		super.onClose();
-		if (!this.resolved) this.resolve(null);
+		// See ResultSuggestModal.onClose for why this is deferred.
+		setTimeout(() => {
+			if (!this.resolved) this.resolve(null);
+		}, 0);
 	}
 }
 
@@ -239,7 +247,10 @@ export class ImagePickerModal extends SuggestModal<MediaImage | NavItem> {
 
 	onClose() {
 		super.onClose();
-		if (!this.resolved) this.resolve(null);
+		// See ResultSuggestModal.onClose for why this is deferred.
+		setTimeout(() => {
+			if (!this.resolved) this.resolve(null);
+		}, 0);
 	}
 }
 
