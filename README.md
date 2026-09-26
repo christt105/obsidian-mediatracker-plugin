@@ -2,180 +2,118 @@
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/christt105)
 
-An Obsidian plugin to track **movies, TV shows, seasons, video games and books** in
-one place. It pulls rich metadata and artwork from **TMDB**, **TheTVDB**, **IGDB**,
-**Steam**, **SteamGridDB** and **Open Library**, and creates clean, customizable
-notes for every entry.
+An Obsidian plugin to track movies, TV shows, seasons, video games, and books. It fetches metadata and artwork from TMDB, TheTVDB, IGDB, Steam, SteamGridDB, and Open Library to create customizable notes in your vault.
 
-This plugin replaces the QuickAdd + Templater + Movie Search script bundle from the
-[Media Tracker Obsidian Template](https://github.com/christt105/media-tracker-obsidian-template):
-everything is now a single, comfortable plugin with native settings — no scripts to
-wire up, no extra plugins required.
+This plugin replaces the QuickAdd, Templater, and Movie Search script bundle from the [Media Tracker Obsidian Template](https://github.com/christt105/media-tracker-obsidian-template). Everything is handled directly inside Obsidian with native settings, requiring no extra scripts or dependencies.
 
-## Media Tracker ecosystem
+## Ecosystem
 
-The plugin is one piece of a small ecosystem that turns your media library into a
-website. **New here? Start with the starter site, then use this plugin to fill it.**
+This plugin can be paired with a Hugo site to publish your media library online:
 
-- 🚀 **[mediatracker-starter](https://github.com/christt105/mediatracker-starter)** —
-  **start here.** A ready-to-clone Hugo site you can deploy to GitHub Pages in
-  minutes. Point this plugin at its `content/` folder and you're tracking.
-  ([live demo](https://christt105.github.io/mediatracker-starter/))
-- 🎨 **[hugo-mediatracker-theme](https://github.com/christt105/hugo-mediatracker-theme)** —
-  the Hugo theme that renders the library (gallery, search, filters, stats, RSS).
-- 📥 **obsidian-mediatracker-plugin** — this repo: the Obsidian plugin that creates
-  theme-compatible notes.
+- [mediatracker-starter](https://github.com/christt105/mediatracker-starter): A ready-to-clone Hugo site template for GitHub Pages. Point this plugin at its `content/` folder to populate your site ([live demo](https://christt105.github.io/mediatracker-starter/)).
+- [hugo-mediatracker-theme](https://github.com/christt105/hugo-mediatracker-theme): Hugo theme that renders the media library (gallery, search, filters, stats, RSS).
+- **obsidian-mediatracker-plugin** (this repo): The Obsidian plugin that creates theme-compatible notes.
 
 ## Features
 
-- **Movies & TV shows** — search **TMDB or TheTVDB** and create a note with poster,
-  banner, genres, cast, director, overview and more. Pick a provider per media kind;
-  ids from both services are cross-stored so artwork can come from either.
-- **Season-accurate TV** — TheTVDB respects season numbering (great for anime and
-  split-cour shows where TMDB groups everything under one season).
-- **Video games** — search IGDB and create a note with cover, screenshot/banner,
-  developer, platforms, genres and Steam app id. Official Steam artwork is used
-  automatically when the game is on Steam.
-- **Books** — search **Open Library** (no API key needed) and create a note with
-  cover, author, publisher, page count, genres, ISBN and synopsis.
-- **Seasons** — from an open TV show note, generate a linked season note in one
-  command. Season air date and poster are pulled from TMDB when available, and a
-  link is added back to the show automatically.
-- **Update images** — replace the cover (poster) or banner (backdrop) of any note by
-  picking from a paged image gallery. Sources: TMDB and TheTVDB (movies/TV/seasons),
-  official Steam art, and SteamGridDB community art (games). Falls back across
-  providers automatically.
-- **Search Steam App ID** — look up and store the Steam app id for the active note.
-- **Fully customizable** — per-type folders, file name format, default status,
-  frontmatter property case, season label/property and optional custom templates.
+- **Movies & TV shows**: Search TMDB or TheTVDB to generate notes with posters, banners, genres, cast, director, and overview. Select a provider per media type; IDs from both services are stored so artwork can be pulled from either source.
+- **TV season numbering**: TheTVDB handles season numbering accurately, useful for anime and split-cour shows.
+- **Video games**: Search IGDB to create notes with covers, screenshots, banners, developers, platforms, genres, and Steam App IDs. Steam artwork is fetched automatically when available.
+- **Books**: Search Open Library (no API key needed) to pull covers, authors, publishers, page counts, genres, ISBNs, and synopses.
+- **Season notes**: Generate a linked season note directly from an active TV show note. Pulls season air dates and posters while referencing the parent show note.
+- **Image selection**: Update covers or banners from a visual gallery. Supports TMDB, TheTVDB, Steam, and SteamGridDB, with automatic fallback across providers.
+- **Steam App ID lookup**: Search and save `steam_appid` directly to the active note.
+- **Customizable configuration**: Configure target folders, file naming rules, default status, frontmatter key case (`snake_case` / `camelCase`), season labels, and custom templates per media type.
 
 ## Commands
 
 | Command | Description |
 | --- | --- |
-| **Add movie or TV show** | Search TMDB and create a note. |
+| **Add movie or TV show** | Search TMDB or TheTVDB and create a note. |
 | **Add video game** | Search IGDB and create a note. |
 | **Add book** | Search Open Library and create a note. |
 | **Create season (from active show note)** | Create a season note linked to the open TV show. |
 | **Search Steam App ID (for active note)** | Find and store `steam_appid`. |
-| **Update images (cover / banner)** | Pick a new cover or banner for the active note. |
-| **Create media views (Bases gallery & table)** | Generate a `.base` file with ready-made gallery and table views. |
+| **Update images (cover / banner)** | Select a new cover or banner for the active note. |
+| **Create media views (Bases gallery & table)** | Generate a `.base` file with default gallery and table views. |
 
-Three ribbon icons are also added: 🎬 *Add movie or TV show*, 🎮 *Add video game* and
-📖 *Add book*. Assign your own hotkeys in **Settings → Hotkeys** (search for "Media
-Tracker").
+The plugin adds three ribbon icons for quick access: *Add movie or TV show*, *Add video game*, and *Add book*. You can assign custom hotkeys in **Settings → Hotkeys** (search for "Media Tracker").
 
 ## Setup
 
-Open **Settings → Media Tracker** and fill in the API keys for the services you want
-to use. Configure only what you need — **TMDB, TheTVDB and Open Library work out of
-the box** (movies, TV and books need no setup), so you only need keys for IGDB
-(games) and SteamGridDB (extra artwork), or to use your own TMDB/TheTVDB keys.
+Configure API keys under **Settings → Media Tracker**. Movies, TV shows, and books work without any initial key configuration (TMDB, TheTVDB, and Open Library work by default). API keys are only required for IGDB (games) and SteamGridDB (additional artwork), or if you want to use custom TMDB/TheTVDB API keys.
 
 ### Providers
 
-Under **Providers**, choose which service supplies movies and TV shows:
+Select your preferred metadata providers for movies and TV shows:
 
-- **Movie provider** and **TV show provider** — each *Auto*, *TMDB* or *TheTVDB*.
-- *Auto* uses **TMDB for movies** and **TheTVDB for shows** when both are configured,
-  otherwise whichever key you set.
-- A typical setup (like Jellyfin): movies → TMDB, shows → TheTVDB. The combined
-  "Add movie or TV show" search then queries both and merges the results.
+- **Movie provider** and **TV show provider**: Set to *Auto*, *TMDB*, or *TheTVDB*.
+- *Auto* defaults to TMDB for movies and TheTVDB for TV shows if both are available, or whichever key is configured.
+- Combined search queries both sources and merges results when both providers are used.
 
-Both `tmdb_id` and `thetvdb_id` are stored on each note when available, so updating
-images can use whichever provider has the artwork (and respects seasons).
+Both `tmdb_id` and `thetvdb_id` are saved to notes when available, allowing image updates from either provider.
 
 ### TMDB (movies & TV shows)
 
-**Works out of the box** — the plugin bundles a shared TMDB key, so movies and TV
-work with no setup. Because it's shared by everyone without their own key, it may be
-rate-limited at busy times.
-
-To use your own (free, private, unthrottled) key instead:
+Works out of the box using a shared key. If you encounter rate limits, you can provide a custom API key:
 
 1. [Create a TMDB account and request an API key](https://www.themoviedb.org/settings/api).
-2. Paste either the **v3 API key** or the **v4 read access token** into *TMDB API key*.
+2. Enter your **v3 API key** or **v4 read access token** into *TMDB API key*.
 
 ### TheTVDB (TV shows & seasons)
 
-**Works out of the box** — the plugin bundles a project API key (TheTVDB v4 keys are
-per-project, not per-user, the same approach Jellyfin uses), so no key or PIN is
-needed. Just pick TheTVDB as your TV provider.
+Works out of the box using a project key. To use a custom key:
 
-To use your own key instead, register a project at
-[TheTVDB API information](https://www.thetvdb.com/api-information), paste the **v4 API
-key** into *TheTVDB API key*, and add your **subscriber PIN** if it's a
-user-supported key.
+1. Register a project at [TheTVDB API information](https://www.thetvdb.com/api-information).
+2. Enter your **v4 API key** into *TheTVDB API key*. If using a user-supported key, enter your **subscriber PIN**.
 
-The login token is fetched and refreshed automatically. Titles and overviews are
-localized to your preferred locale (falling back to English, then the original
-language) using TheTVDB's translations.
+Authentication tokens are refreshed automatically. Metadata is localized to your preferred locale with fallbacks to English and the original language.
 
 ### IGDB (video games)
 
 1. Log in to the [Twitch developer console](https://dev.twitch.tv/console/apps).
-2. Register a new application:
+2. Register an application:
    - **OAuth Redirect URL:** `http://localhost`
    - **Category:** Application Integration
    - **Client Type:** Confidential
-3. Open *Manage* and copy the **Client ID** and **Client Secret** into the settings.
+3. Copy the **Client ID** and **Client Secret** into settings.
 
-The OAuth token is fetched and refreshed automatically.
+OAuth tokens are fetched and refreshed automatically.
 
 ### SteamGridDB (artwork)
 
-Generate an API key from your
-[SteamGridDB preferences](https://www.steamgriddb.com/profile/preferences/api) and
-paste it into *SteamGridDB API key*. Used by **Update images** for game artwork.
+Generate an API key from [SteamGridDB preferences](https://www.steamgriddb.com/profile/preferences/api) and paste it into *SteamGridDB API key*. Used by the **Update images** command for video game artwork.
 
 ### Open Library (books)
 
-**Works out of the box** — books come from [Open Library](https://openlibrary.org/),
-a free open catalogue from the Internet Archive that needs **no API key**. Just run
-**Add book**. The cover, author, publisher, page count, genres, ISBN and synopsis are
-filled in automatically.
+Works out of the box through [Open Library](https://openlibrary.org/). No API key is required.
 
-**Languages.** Your preferred locale (set in the TMDB section) filters the search and
-selects a localized **title and cover** when the book has an edition in that language
-— e.g. with a Spanish locale, *The Hobbit* becomes *El Hobbit* with its Spanish cover.
-Synopses are catalogue-wide and usually in English, since Open Library stores the
-description on the work rather than per language.
+**Languages**: Search results and covers filter by your preferred locale (configured in TMDB settings) when localized editions exist. Synopsis text is retrieved from the work level and is usually in English.
 
 ## Customization
 
-| Setting | What it does |
+| Setting | Description |
 | --- | --- |
-| Movies / TV / Seasons / Games / Books folder | Where each kind of note is created. |
-| File name format | `{{title}}`, `{{year}}`, `{{release_date}}` placeholders. |
-| Default status | Status assigned to new entries (e.g. `Not Started`). |
-| Frontmatter property case | `snake_case` or `camelCase` keys. |
-| Seasons list property | Property on the show note holding season links. |
-| Season label | Word used in season file names (`Season`, `Temporada`, ...). |
-| Custom templates | Optional template file per media type. |
+| Media folders | Output folder for each media type. |
+| File name format | Naming pattern using `{{title}}`, `{{year}}`, `{{release_date}}` placeholders. |
+| Default status | Default status value assigned to new notes (e.g., `Not Started`). |
+| Frontmatter property case | Key formatting style (`snake_case` or `camelCase`). |
+| Seasons list property | Note property used to list season links on TV show notes. |
+| Season label | Prefix word for season note file names (`Season`, `Temporada`, etc.). |
+| Custom templates | Optional Markdown template files per media type. |
 
 ### Custom templates
 
-Leave the template fields empty to use the built-in frontmatter (compatible with the
-Media Tracker template / Hugo theme). To take full control, point a media type at a
-template note that uses `{{variable}}` placeholders. Arrays such as genres are joined
-with commas.
+If template paths are empty, the plugin uses built-in frontmatter defaults compatible with the Hugo theme. You can specify a custom note template for any media type using `{{variable}}` placeholders. Array fields are formatted as comma-separated lists.
 
-Available variables include: `title`, `original_title`, `type`, `release_date`,
-`year`, `overview`, `cover`, `banner`, `genres`, `rating`, `tmdb_id`, `director`,
-`main_actors`, `homepage`, `tagline`, `youtube_url`, `number_of_seasons`, `tmdb_id`,
-`thetvdb_id`, `igdb_id`, `steam_appid`, `steamgriddb_id`, `developer`,
-`available_platforms`, `game_modes`, `season_number`, `series_file`, `openlibrary_id`,
-`author`, `authors`, `publisher`, `isbn`, `page_count`.
+Available variables: `title`, `original_title`, `type`, `release_date`, `year`, `overview`, `cover`, `banner`, `genres`, `rating`, `tmdb_id`, `director`, `main_actors`, `homepage`, `tagline`, `youtube_url`, `number_of_seasons`, `thetvdb_id`, `igdb_id`, `steam_appid`, `steamgriddb_id`, `developer`, `available_platforms`, `game_modes`, `season_number`, `series_file`, `openlibrary_id`, `author`, `authors`, `publisher`, `isbn`, `page_count`.
 
 > [!NOTE]
-> For games, `available_platforms` holds the platforms the game is released on (from
-> IGDB). The separate `platforms` property is left empty for you to record the
-> platform(s) you actually played it on.
+> For games, `available_platforms` lists platform availability from IGDB. The `platforms` property is left blank so you can track the specific platform you used.
 
 ## Generated frontmatter
 
-Notes are created with frontmatter compatible with the Media Tracker Hugo theme, e.g.
-a movie:
+Notes are created with frontmatter compatible with the Media Tracker Hugo theme, e.g. a movie:
 
 ```yaml
 ---
@@ -199,7 +137,7 @@ overview: "Eighties teenager Marty McFly..."
 ---
 ```
 
-…and a book:
+and a book:
 
 ```yaml
 ---
@@ -226,34 +164,27 @@ overview: "The Hobbit is a tale of high adventure, undertaken by a company of dw
 
 ## Installation
 
-### With BRAT (recommended)
+### Via BRAT
 
-[BRAT](https://github.com/TfTHacker/obsidian42-brat) installs and auto-updates the
-plugin straight from this repository:
+[BRAT](https://github.com/TfTHacker/obsidian42-brat) can install and update the plugin directly from GitHub:
 
-1. Install **BRAT** from *Settings → Community plugins → Browse* and enable it.
-2. Run the command **BRAT: Add a beta plugin for testing** (or *Settings → BRAT →
-   Add Beta Plugin*).
-3. Enter `christt105/obsidian-mediatracker-plugin` and confirm. BRAT grabs the latest
-   release, so leave the version as *latest*.
-4. Enable **Media Tracker** in *Settings → Community plugins* and add your API keys.
+1. Install and enable **BRAT** from *Settings → Community plugins → Browse*.
+2. Run the command **BRAT: Add a beta plugin for testing** (or open *Settings → BRAT → Add Beta Plugin*).
+3. Enter `christt105/obsidian-mediatracker-plugin` and submit.
+4. Enable **Media Tracker** in *Settings → Community plugins*.
 
-> Requires Obsidian **1.6.6+**.
+> Requires Obsidian 1.6.6 or later.
 
-### Manual
+### Manual installation
 
-1. Download `main.js`, `manifest.json` and `styles.css` from the
-   [latest release](https://github.com/christt105/obsidian-mediatracker-plugin/releases).
-2. Copy them into `<vault>/.obsidian/plugins/media-tracker/`.
+1. Download `main.js`, `manifest.json`, and `styles.css` from the [latest release](https://github.com/christt105/obsidian-mediatracker-plugin/releases).
+2. Place the files into `<vault>/.obsidian/plugins/media-tracker/`.
 3. Reload Obsidian and enable **Media Tracker** in *Settings → Community plugins*.
 
 ## Recommended companion plugins
 
-- [**Pretty Properties**](https://obsidian.md/plugins?id=pretty-properties) — renders
-  the `cover` and `banner` properties as proper images/banners, giving each note a
-  rich, gallery-like look. Highly recommended for the best visualization.
-- [**Bases**](https://help.obsidian.md/bases) (core plugin) — run **Create media
-  views** to generate a `.base` with gallery and table views of your whole library.
+- [Pretty Properties](https://obsidian.md/plugins?id=pretty-properties): Renders `cover` and `banner` image properties directly in notes.
+- [Bases](https://help.obsidian.md/bases) (core plugin): Run **Create media views** to generate a `.base` file with gallery and table views of your library.
 
 ## Development
 
@@ -266,30 +197,20 @@ npm run lint     # eslint (obsidianmd ruleset)
 
 ### Releasing
 
-Releases are automated by `.github/workflows/release.yml` (from the official
-Obsidian sample plugin). Bump the version and push a tag:
+Releases are automated via GitHub Actions (`.github/workflows/release.yml`). To release a new version:
 
 ```bash
 npm version patch   # updates manifest.json + versions.json via version-bump.mjs
 git push --follow-tags
 ```
 
-Pushing a tag builds the plugin and creates a **draft GitHub release** with
-`main.js`, `manifest.json` and `styles.css` attached, ready to publish.
-A separate `lint.yml` workflow type-checks and lints every push and PR.
+Pushing a tag triggers a build and creates a draft GitHub release with `main.js`, `manifest.json`, and `styles.css` attached.
 
 ## Credits
 
-This plugin builds on the work of several open-source projects:
-
-- [**Movie Search**](https://github.com/Gubchik123/obsidian-movie-search-plugin) by
-  Gubchik123 — the TMDB integration patterns (multi-search, v3/v4 token handling,
-  trailer selection, template variables and settings layout) are adapted from it.
-- [**obsidian-sample-plugin**](https://github.com/obsidianmd/obsidian-sample-plugin) —
-  project scaffolding, build setup and release workflow.
-- The QuickAdd / Templater scripts from the
-  [Media Tracker Obsidian Template](https://github.com/christt105/media-tracker-obsidian-template)
-  (IGDB script originally by christt105 / Elaws), which this plugin replaces.
+- [Movie Search](https://github.com/Gubchik123/obsidian-movie-search-plugin) by Gubchik123: TMDB integration patterns, token handling, and settings layout inspiration.
+- [obsidian-sample-plugin](https://github.com/obsidianmd/obsidian-sample-plugin): Project scaffolding and build configuration.
+- QuickAdd / Templater scripts from the [Media Tracker Obsidian Template](https://github.com/christt105/media-tracker-obsidian-template) (IGDB script originally by christt105 / Elaws).
 
 ## Attribution
 
