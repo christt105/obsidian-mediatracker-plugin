@@ -186,6 +186,16 @@ overview: "The Hobbit is a tale of high adventure, undertaken by a company of dw
 - [Pretty Properties](https://obsidian.md/plugins?id=pretty-properties): Renders `cover` and `banner` image properties directly in notes.
 - [Bases](https://help.obsidian.md/bases) (core plugin): Run **Create media views** to generate a `.base` file with gallery and table views of your library.
 
+## Screenshots
+
+| Library View | TV Show Note |
+| :---: | :---: |
+| <img src="docs/movies.png" width="400" alt="Library View" /> | <img src="docs/show-note.png" width="400" alt="TV Show Note" /> |
+
+| TV Season Note | Video Game Note |
+| :---: | :---: |
+| <img src="docs/season-note.png" width="400" alt="TV Season Note" /> | <img src="docs/videogame-note.png" width="400" alt="Video Game Note" /> |
+
 ## Development
 
 ```bash
