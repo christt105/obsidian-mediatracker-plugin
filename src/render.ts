@@ -110,7 +110,7 @@ export function substitute_variables(template: string, media: MediaData): string
 		if (value === undefined || value === null) return "";
 		if (Array.isArray(value)) return value.join(", ");
 		if (typeof value === "object") return JSON.stringify(value);
-		// eslint-disable-next-line @typescript-eslint/no-base-to-string
+		// eslint-disable-next-line @typescript-eslint/no-base-to-string -- arrays and objects are handled above, so only primitives reach here.
 		return String(value);
 	});
 }

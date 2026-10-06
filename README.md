@@ -33,7 +33,7 @@ This plugin can be paired with a Hugo site to publish your media library online:
 | **Add video game** | Search IGDB and create a note. |
 | **Add book** | Search Open Library and create a note. |
 | **Create season (from active show note)** | Create a season note linked to the open TV show. |
-| **Search Steam App ID (for active note)** | Find and store `steam_appid`. |
+| **Search Steam app ID (for active note)** | Find and store `steam_appid`. |
 | **Update images (cover / banner)** | Select a new cover or banner for the active note. |
 | **Create media views (Bases gallery & table)** | Generate a `.base` file with default gallery and table views. |
 

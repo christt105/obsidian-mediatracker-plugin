@@ -49,7 +49,7 @@ export default class MediaTrackerPlugin extends Plugin {
 		});
 		this.addCommand({
 			id: "search-steam-id",
-			name: "Search Steam App ID (for active note)",
+			name: "Search Steam app ID (for active note)",
 			callback: () => this.run(() => this.search_steam_id()),
 		});
 		this.addCommand({
@@ -474,7 +474,7 @@ export default class MediaTrackerPlugin extends Plugin {
 			thetvdb_id = thetvdb_id ?? (pfm?.thetvdb_id as number | undefined);
 		}
 		if (!tmdb_id && !thetvdb_id) {
-			new Notice("No 'tmdb_id' or 'thetvdb_id' found on this note (or its parent show).");
+			new Notice("This note (and its parent show) has no TMDB or TheTVDB ID.");
 			return null;
 		}
 
@@ -690,8 +690,7 @@ export default class MediaTrackerPlugin extends Plugin {
 	}
 
 	private frontmatter_of(file: TFile): Frontmatter | undefined {
-		// Obsidian types `frontmatter` as `any`; expose it with `unknown` values.
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- Obsidian types `frontmatter` as `any`; expose it with `unknown` values.
 		return this.app.metadataCache.getFileCache(file)?.frontmatter as Frontmatter | undefined;
 	}
 
