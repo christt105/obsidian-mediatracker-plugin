@@ -224,8 +224,12 @@ export default class MediaTrackerPlugin extends Plugin {
 			return this.provider_search(movie_provider, query, "all", language);
 		}
 		const [movies, shows] = await Promise.all([
-			this.provider_search(movie_provider, query, "movie", language).catch(report_empty),
-			this.provider_search(tv_provider, query, "tv", language).catch(report_empty),
+			this.provider_search(movie_provider, query, "movie", language).catch((error: unknown) =>
+				report_failed_search(movie_provider, error),
+			),
+			this.provider_search(tv_provider, query, "tv", language).catch((error: unknown) =>
+				report_failed_search(tv_provider, error),
+			),
 		]);
 		return [...movies, ...shows];
 	}
@@ -722,9 +726,11 @@ function sanitize_file_name(name: string): string {
 	return name.replace(/[\\/:*?"<>|#^[\]]/g, "").replace(/\s+/g, " ").trim();
 }
 
-/** Log a failed provider search and continue with no results. */
-function report_empty(error: unknown): SearchResult[] {
-	console.warn("Media Tracker: search failed for one provider", error);
+/** Report a failed provider search and continue with no results from it. */
+function report_failed_search(provider: Provider, error: unknown): SearchResult[] {
+	const name = provider === "tmdb" ? "TMDB" : "TheTVDB";
+	console.warn(`Media Tracker: ${name} search failed`, error);
+	new Notice(`Media Tracker: ${name} search failed (${(error as Error).message}).`);
 	return [];
 }
 
