@@ -1,9 +1,7 @@
-import tseslint from 'typescript-eslint';
+import { defineConfig, globalIgnores } from 'eslint/config';
 import obsidianmd from 'eslint-plugin-obsidianmd';
-import globals from 'globals';
-import { globalIgnores } from 'eslint/config';
 
-export default tseslint.config(
+export default defineConfig(
 	globalIgnores([
 		'node_modules',
 		'dist',
@@ -17,9 +15,6 @@ export default tseslint.config(
 	]),
 	{
 		languageOptions: {
-			globals: {
-				...globals.browser,
-			},
 			parserOptions: {
 				projectService: {
 					allowDefaultProject: ['eslint.config.mts', 'manifest.json'],
@@ -32,9 +27,24 @@ export default tseslint.config(
 	...obsidianmd.configs.recommended,
 	{
 		rules: {
-			// Our UI text intentionally keeps brand-name capitalization
-			// (TMDB, IGDB, Steam, SteamGridDB), which this rule would lowercase.
-			'obsidianmd/ui/sentence-case': 'off',
+			'obsidianmd/ui/sentence-case': [
+				'error',
+				{
+					brands: [
+						'Obsidian',
+						'Bases',
+						'Media Tracker',
+						'TheTVDB',
+						'Steam',
+						'SteamGridDB',
+						'Open Library',
+						'YouTube',
+					],
+					acronyms: ['API', 'ID', 'PIN', 'TV', 'TMDB', 'IGDB', 'URL', 'OK'],
+					ignoreWords: ['Enter', 'camelCase'],
+					ignoreRegex: ['^snake_case$', '^[a-z]{2}(,[a-z]{2})*$'],
+				},
+			],
 		},
 	},
 );

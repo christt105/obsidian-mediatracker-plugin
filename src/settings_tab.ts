@@ -103,7 +103,7 @@ export class MediaTrackerSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Season label")
-			.setDesc('Word used in season file names, e.g. "Show - Season 1".')
+			.setDesc("Word placed before the season number in season file names.")
 			.addText(text =>
 				text.setValue(this.settings.season_label).onChange(async value => {
 					this.settings.season_label = value.trim() || "Season";
@@ -165,7 +165,7 @@ export class MediaTrackerSettingTab extends PluginSettingTab {
 			.setName("Preferred locale")
 			.setDesc("Language used when fetching movie/TV data.")
 			.addDropdown(dd => {
-				dd.addOption("auto", "auto");
+				dd.addOption("auto", "Auto");
 				window.moment.locales().forEach(locale => {
 					dd.addOption(locale, locale);
 				});
