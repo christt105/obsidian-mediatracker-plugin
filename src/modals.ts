@@ -144,12 +144,7 @@ export class ResultSuggestModal extends SuggestModal<SearchResult> {
 
 	onClose() {
 		super.onClose();
-		// Obsidian can fire onClose (e.g. from a click-triggered blur) before
-		// onChooseSuggestion finishes running for that same click. Defer the
-		// "nothing chosen" fallback one tick so a same-gesture choice wins.
-		setTimeout(() => {
-			if (!this.resolved) this.resolve(null);
-		}, 0);
+		resolve_unless_chosen(() => this.resolved, this.resolve);
 	}
 }
 
@@ -184,10 +179,7 @@ export class ChoiceModal<T> extends SuggestModal<T> {
 
 	onClose() {
 		super.onClose();
-		// See ResultSuggestModal.onClose for why this is deferred.
-		setTimeout(() => {
-			if (!this.resolved) this.resolve(null);
-		}, 0);
+		resolve_unless_chosen(() => this.resolved, this.resolve);
 	}
 }
 
@@ -247,11 +239,20 @@ export class ImagePickerModal extends SuggestModal<MediaImage | NavItem> {
 
 	onClose() {
 		super.onClose();
-		// See ResultSuggestModal.onClose for why this is deferred.
-		setTimeout(() => {
-			if (!this.resolved) this.resolve(null);
-		}, 0);
+		resolve_unless_chosen(() => this.resolved, this.resolve);
 	}
+}
+
+/**
+ * Resolve a picker to `null` unless a suggestion gets chosen. On desktop,
+ * `SuggestModal.selectSuggestion` closes the modal, running `onClose`
+ * synchronously, before it calls `onChooseSuggestion`, so the fallback waits
+ * one tick for the choice to land.
+ */
+function resolve_unless_chosen(is_resolved: () => boolean, resolve: (value: null) => void) {
+	window.setTimeout(() => {
+		if (!is_resolved()) resolve(null);
+	}, 0);
 }
 
 interface NavItem {
